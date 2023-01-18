@@ -7,13 +7,13 @@ from random import random
 import matplotlib.pyplot as plt
 
 #location of spectra np
-spectra_file_address='/home/rictuar/coding_projects/fiehn_work/nn_practice/intermediates/model_inputs_gc/spectra_as_np_nist17gc.bin'
+spectra_file_address='../intermediates/spectra_as_np_nist17gc.bin'
 #location of fingerprint file
 #fingerprint file is a subset of the spectra file
 #not every structure was reliable, and there were also multiple isomer forms of various flattened
 #we arbitrarily kept the first encountering of each inchikey first block
 #we also only made fingerprints for those compounds with an observed max mz <=500 and >50 
-fingerprint_file_address='/home/rictuar/coding_projects/fiehn_work/nn_practice/intermediates/model_inputs_gc/gc_with_morgan.bin'
+fingerprint_file_address='../intermediates/gc_with_morgan.bin'
 
 class GCMSDataset(Dataset):
     
@@ -188,6 +188,10 @@ def custom_collate(data):
     #return data
 
 if __name__=="__main__":
+    #notes to self: what we really want to check out is
+    #include fingerprints: yes or no
+    #frame as classification: yes or no
+    #include absolute position: yes or no (probably yes?)
     my_Dataset=GCMSDataset(True,True,True,500,True,True)
     #my_Dataset.__getitem__(0)
 
