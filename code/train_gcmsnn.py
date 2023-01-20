@@ -26,7 +26,7 @@ def train_network(
 
         for i,(X,y) in enumerate(train_DataLoader):
 
-            if i%1000==0:
+            if i%100==0:
                 print(f'we are on batch {i}')
 
             yHat=NN(X)
@@ -36,20 +36,21 @@ def train_network(
             loss.backward()
             optimizer.step()
 
-            print('yHat')
-            print(yHat)
-            print('y')
-            print(y)
-            print('loss')
-            print(loss)
+            # print('yHat')
+            # print(yHat.size())
+            # print('y')
+            # print(y.size())
+            # print('loss')
+            # print(loss.size())
+            # print(loss)
 
             if prediction_style=='classify':
                 #print('statement from udemy')
                 #print(100*torch.mean((torch.argmax(yHat,axis=1) == y).float()).item())
                 this_train_loss+=100*torch.mean((torch.argmax(yHat,axis=1) == y).float()).item()
-                hold=input('hold')
+                # hold=input('hold')
             elif prediction_style=='regression':
-                hjold=input('hodl')
+                # hjold=input('hodl')
                 this_train_loss+=loss.item()
 
         this_train_loss=this_train_loss/i

@@ -49,11 +49,11 @@ def create_GCMSNN_and_peripherals(
             #in conjunction with the comment in the input, we include these parameters as fixed assumptions
             list_of_included_feature_lengths=list()
             if include_mz_location==True:
-                list_of_included_feature_lengths.append(500)
+                list_of_included_feature_lengths.append(501)
             if include_fingerprint==True:
                 list_of_included_feature_lengths.append(2400)
             if include_mz_surroundings==True:
-                list_of_included_feature_lengths.append(2*500)
+                list_of_included_feature_lengths.append(2*501)
             # length_of_morgan_fingerprints=2000
             # number_of_mz_abs_locations=500
             # number_of_relative_locations=2*500
@@ -114,7 +114,7 @@ def create_GCMSNN_and_peripherals(
                         training=self.training
                     )
 
-            return x
+            return x.squeeze()
 
 
     my_GCMSNN=GCMSNN(
