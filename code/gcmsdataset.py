@@ -6,14 +6,7 @@ from torch.utils.data import DataLoader
 from random import random
 import matplotlib.pyplot as plt
 
-#location of spectra np
-spectra_file_address='../intermediates/spectra_as_np_nist17gc.bin'
-#location of fingerprint file
-#fingerprint file is a subset of the spectra file
-#not every structure was reliable, and there were also multiple isomer forms of various flattened
-#we arbitrarily kept the first encountering of each inchikey first block
-#we also only made fingerprints for those compounds with an observed max mz <=500 and >50 
-fingerprint_file_address='../intermediates/gc_with_morgan.bin'
+
 
 class GCMSDataset(Dataset):
     
@@ -76,11 +69,15 @@ class GCMSDataset(Dataset):
         include_fingerprint=True,
         maximum_largest_intensity=500,
         subsample_with_class_imbalance=True,
-        form_as_classification=True
+        prediction_style='class',
+        spectra_data=None,
+        structure_data=None
     ):
 
-        self.spectra_data=pd.read_pickle(spectra_file_address)
-        self.structure_data=pd.read_pickle(fingerprint_file_address)
+
+
+        self.spectra_data=spectra_data
+        self.structure_data=structure_data        
 
         #in light of the above notes on the fingerprints, we subset the spectra
         self.spectra_data=self.spectra_data.loc[self.structure_data.index,:]
@@ -93,7 +90,7 @@ class GCMSDataset(Dataset):
         self.include_fingerprint=include_fingerprint
         self.maximum_largest_intensity=maximum_largest_intensity
         self.subsample_with_class_imbalance=subsample_with_class_imbalance
-        self.form_as_classification=form_as_classification
+        self.prediction_style=prediction_style
 
     def __len__(self):
         return len(self.spectra_data.index)
@@ -171,16 +168,30 @@ class GCMSDataset(Dataset):
             ]
             # plt.hist(y,bins=10)
             # plt.show()
+            x=x[
+                random_numbers<cutoff_per_element
+            ]
 
-        if self.form_as_classification==True:
+
+        if self.prediction_style=='class':
             y=np.digitize(y,bins=np.arange(0,1,0.1))
             y=np.array([element-1 for element in y])
         #also, we want to subsample if that is true
 
 
-        #what is the difference here?
-        x=torch.tensor(x).float()
-        y=torch.from_numpy(y).float()
+        # print(np.shape(x))
+        # #print(x)
+        # print(np.shape(y))
+        # #print(y)
+
+        #what is the difference here? from vs tensor
+        if self.prediction_style=='regression':
+            x=torch.tensor(x).float()
+            y=torch.from_numpy(y).float()
+        elif self.prediction_style=='class':
+            x=torch.tensor(x).float()
+            y=torch.from_numpy(y).long()
+        
 
         return x,y
 
@@ -194,19 +205,12 @@ def custom_collate(data):
     return torch.cat([element[0] for element in data]),torch.cat([element[1] for element in data])
     #return data
 
-if __name__=="__main__":
+# if __name__=="__main__":
     #notes to self: what we really want to check out is
     #include fingerprints: yes or no
     #frame as classification: yes or no
     #include absolute position: yes or no (probably yes?)
-    my_Dataset=GCMSDataset(
-        include_mz_location=True,
-        include_mz_surroundings=True,
-        include_fingerprint=True,
-        maximum_largest_intensity=500,
-        subsample_with_class_imbalance=True,
-        form_as_classification=True
-    )
+
     #my_Dataset.__getitem__(0)
 
     # test_dataloader=DataLoader(

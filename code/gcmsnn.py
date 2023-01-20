@@ -9,7 +9,7 @@ def create_GCMSNN_and_peripherals(
     #breadth='2x',
     num_dropout_layers=1,#must be less than or equal to depth
     dropout_prob=0,
-    prediciton_style='class', 
+    prediction_style='class', 
     #should ask dataset to provide a value in the superwrapper
     #for now we basically assume that the number of features is only a function
     #of what types of features we include (abs position, difference, structure)
@@ -26,7 +26,7 @@ def create_GCMSNN_and_peripherals(
             #breadth='2x',
             num_dropout_layers=1,#must be less than or equal to depth
             dropout_prob=0,
-            prediciton_style='class', 
+            prediction_style='class', 
             #should ask dataset to provide a value in the superwrapper
             #for now we basically assume that the number of features is only a function
             #of what types of features we include (abs position, difference, structure)
@@ -44,7 +44,7 @@ def create_GCMSNN_and_peripherals(
             # self.breadth=breadth
             # self.num_dropout_layers=num_dropout_layers
             # self.dropout_prob=dropout_prob
-            # self.prediciton_style=prediciton_style
+            # self.prediction_style=prediction_style
 
             #in conjunction with the comment in the input, we include these parameters as fixed assumptions
             list_of_included_feature_lengths=list()
@@ -61,9 +61,9 @@ def create_GCMSNN_and_peripherals(
             total_input_feature_size=sum(list_of_included_feature_lengths)
 
             #not done yet with prediction style, later need to determine the loss type
-            if prediciton_style=='class':
+            if prediction_style=='class':
                 total_output_size=10
-            elif prediciton_style=='regression':
+            elif prediction_style=='regression':
                 total_output_size=1
 
             #now we are free to decide the general shape of the network. Basically, we will try simple geometries for now.
@@ -122,7 +122,7 @@ def create_GCMSNN_and_peripherals(
         #breadth='2x',
         num_dropout_layers,#must be less than or equal to depth
         dropout_prob,
-        prediciton_style, 
+        prediction_style, 
         #should ask dataset to provide a value in the superwrapper
         #for now we basically assume that the number of features is only a function
         #of what types of features we include (abs position, difference, structure)
@@ -132,9 +132,9 @@ def create_GCMSNN_and_peripherals(
     )
 
 
-    if prediciton_style=='class':
+    if prediction_style=='class':
         loss_function=nn.CrossEntropyLoss()
-    elif prediciton_style=='regression':
+    elif prediction_style=='regression':
         loss_function=nn.MSELoss()
 
     optimizer=torch.optim.Adam(my_GCMSNN.parameters(),lr=learning_rate)
@@ -150,7 +150,7 @@ if __name__=="__main__":
         #breadth='2x',
         num_dropout_layers=0,#must be less than or equal to depth
         dropout_prob=0,
-        prediciton_style='regression', 
+        prediction_style='regression', 
         #should ask dataset to provide a value in the superwrapper
         #for now we basically assume that the number of features is only a function
         #of what types of features we include (abs position, difference, structure)
