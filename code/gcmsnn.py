@@ -5,7 +5,6 @@ import torch.nn.functional as F
 
 
 def create_GCMSNN_and_peripherals(
-    self,
     depth=2,#depth is number of layers between input and output
     #breadth='2x',
     num_dropout_layers=1,#must be less than or equal to depth
@@ -14,9 +13,9 @@ def create_GCMSNN_and_peripherals(
     #should ask dataset to provide a value in the superwrapper
     #for now we basically assume that the number of features is only a function
     #of what types of features we include (abs position, difference, structure)
-    include_structure=True,
-    include_absolute_mz=True,
-    include_difference_mz=True,
+    include_fingerprint=True,
+    include_mz_location=True,
+    include_mz_surroundings=True,
     learning_rate=0.001
 ):
     class GCMSNN(nn.Module):
@@ -31,9 +30,9 @@ def create_GCMSNN_and_peripherals(
             #should ask dataset to provide a value in the superwrapper
             #for now we basically assume that the number of features is only a function
             #of what types of features we include (abs position, difference, structure)
-            include_structure=True,
-            include_absolute_mz=True,
-            include_difference_mz=True
+            include_fingerprint=True,
+            include_mz_location=True,
+            include_mz_surroundings=True
         ):
 
             self.num_dropout_layers=num_dropout_layers#must be less than or equal to depth
@@ -49,11 +48,11 @@ def create_GCMSNN_and_peripherals(
 
             #in conjunction with the comment in the input, we include these parameters as fixed assumptions
             list_of_included_feature_lengths=list()
-            if include_absolute_mz==True:
+            if include_mz_location==True:
                 list_of_included_feature_lengths.append(500)
-            if include_structure==True:
-                list_of_included_feature_lengths.append(2000)
-            if include_difference_mz==True:
+            if include_fingerprint==True:
+                list_of_included_feature_lengths.append(2400)
+            if include_mz_surroundings==True:
                 list_of_included_feature_lengths.append(2*500)
             # length_of_morgan_fingerprints=2000
             # number_of_mz_abs_locations=500
@@ -107,7 +106,7 @@ def create_GCMSNN_and_peripherals(
         def forward(self, x):
 
             for i in range(self.depth):
-                x=F.relu( self.layers[f'hidden_{i}'] )
+                x=F.relu( self.layers[f'hidden_{i}'](x) )
                 if i<self.num_dropout_layers:
                     x=F.dropout(
                         x,
@@ -127,9 +126,9 @@ def create_GCMSNN_and_peripherals(
         #should ask dataset to provide a value in the superwrapper
         #for now we basically assume that the number of features is only a function
         #of what types of features we include (abs position, difference, structure)
-        include_structure,
-        include_absolute_mz,
-        include_difference_mz
+        include_fingerprint,
+        include_mz_location,
+        include_mz_surroundings
     )
 
 
@@ -149,14 +148,14 @@ if __name__=="__main__":
     my_GCMSNN=create_GCMSNN_and_peripherals(
         depth=5,#depth is number of layers between input and output
         #breadth='2x',
-        num_dropout_layers=1,#must be less than or equal to depth
+        num_dropout_layers=0,#must be less than or equal to depth
         dropout_prob=0,
-        prediciton_style='class', 
+        prediciton_style='regression', 
         #should ask dataset to provide a value in the superwrapper
         #for now we basically assume that the number of features is only a function
         #of what types of features we include (abs position, difference, structure)
-        include_structure=True,
-        include_absolute_mz=True,
-        include_difference_mz=True,
+        include_fingerprint=True,
+        include_mz_location=True,
+        include_mz_surroundings=True,
         learning_rate=0.001
     )

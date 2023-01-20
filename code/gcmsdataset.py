@@ -63,14 +63,21 @@ class GCMSDataset(Dataset):
 
         return output_array
 
-
     def return_fingprint_repeated_num_of_mz_times(self, temp_fingerprint, temp_spectrum):
 
         fingerprint_list=[temp_fingerprint for i in range(len(temp_spectrum))]
 
         return np.vstack(fingerprint_list)
 
-    def __init__(self,include_mz_location,include_mz_surroundings,include_fingerprint,maximum_largest_intensity,subsample_with_class_imbalance,form_as_classification):
+    def __init__(
+        self,
+        include_mz_location=True,
+        include_mz_surroundings=True,
+        include_fingerprint=True,
+        maximum_largest_intensity=500,
+        subsample_with_class_imbalance=True,
+        form_as_classification=True
+    ):
 
         self.spectra_data=pd.read_pickle(spectra_file_address)
         self.structure_data=pd.read_pickle(fingerprint_file_address)
@@ -192,28 +199,28 @@ if __name__=="__main__":
     #include fingerprints: yes or no
     #frame as classification: yes or no
     #include absolute position: yes or no (probably yes?)
-    my_Dataset=GCMSDataset(True,True,True,500,True,True)
+    my_Dataset=GCMSDataset(
+        include_mz_location=True,
+        include_mz_surroundings=True,
+        include_fingerprint=True,
+        maximum_largest_intensity=500,
+        subsample_with_class_imbalance=True,
+        form_as_classification=True
+    )
     #my_Dataset.__getitem__(0)
 
-    test_dataloader=DataLoader(
-        dataset=my_Dataset,
-        #should keep the bin size high to guarantee never rolling "keeping 0" n times
-        batch_size=50,
-        shuffle=False,
-        num_workers=1,
-        collate_fn=custom_collate
-    )
+    # test_dataloader=DataLoader(
+    #     dataset=my_Dataset,
+    #     #should keep the bin size high to guarantee never rolling "keeping 0" n times
+    #     batch_size=50,
+    #     shuffle=False,
+    #     num_workers=1,
+    #     collate_fn=custom_collate
+    # )
 
-    test_data=iter(test_dataloader)
-    X,y=next(test_data)
-    print(X)
-    print(y)
-    plt.hist(y.numpy(),bins=10)
-    plt.show()
-    # output_int.append(y.numpy().copy())
+    # test_data=iter(test_dataloader)
     # X,y=next(test_data)
     # print(X)
     # print(y)
-    # output_int.append(y.numpy().copy())
-    # output_int=np.hstack(output_int)
-    # print(output_int)
+    # plt.hist(y.numpy(),bins=10)
+    # plt.show()
