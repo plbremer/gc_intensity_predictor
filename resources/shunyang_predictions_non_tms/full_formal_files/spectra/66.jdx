@@ -1,0 +1,25 @@
+##TITLE=Theoretical in-silico spectrum (QCEIMS)
+##JCAMP-DX=4.24
+##DATA TYPE=MASS SPECTRUM
+##XUNITS=M/Z
+##YUNITS=RELATIVE INTENSITY
+##NPOINTS=17
+##PEAK TABLE=(XY..XY) 1
+   29.000000       0
+   30.000000       0
+   31.000000       0
+   39.000000       0
+   40.000000       9
+   41.000000       0
+   42.000000       0
+   43.000000       0
+   45.000000       0
+   46.000000       0
+   47.000000       0
+   48.000000       0
+   67.000000       1
+   68.000000     100
+   69.000000       4
+   70.000000       0
+   71.000000       0
+##END=

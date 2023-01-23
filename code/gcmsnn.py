@@ -9,7 +9,7 @@ def create_GCMSNN_and_peripherals(
     #breadth='2x',
     num_dropout_layers=1,#must be less than or equal to depth
     dropout_prob=0,
-    prediction_style='class', 
+    prediction_style='classify', 
     #should ask dataset to provide a value in the superwrapper
     #for now we basically assume that the number of features is only a function
     #of what types of features we include (abs position, difference, structure)
@@ -26,7 +26,7 @@ def create_GCMSNN_and_peripherals(
             #breadth='2x',
             num_dropout_layers=1,#must be less than or equal to depth
             dropout_prob=0,
-            prediction_style='class', 
+            prediction_style='classify', 
             #should ask dataset to provide a value in the superwrapper
             #for now we basically assume that the number of features is only a function
             #of what types of features we include (abs position, difference, structure)
@@ -61,7 +61,7 @@ def create_GCMSNN_and_peripherals(
             total_input_feature_size=sum(list_of_included_feature_lengths)
 
             #not done yet with prediction style, later need to determine the loss type
-            if prediction_style=='class':
+            if prediction_style=='classify':
                 total_output_size=10
             elif prediction_style=='regression':
                 total_output_size=1
@@ -132,7 +132,7 @@ def create_GCMSNN_and_peripherals(
     )
 
 
-    if prediction_style=='class':
+    if prediction_style=='classify':
         loss_function=nn.CrossEntropyLoss()
     elif prediction_style=='regression':
         loss_function=nn.MSELoss()

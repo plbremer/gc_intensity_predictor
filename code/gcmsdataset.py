@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from random import random
 import matplotlib.pyplot as plt
 
-
+from time import time
 
 class GCMSDataset(Dataset):
     
@@ -58,9 +58,19 @@ class GCMSDataset(Dataset):
 
     def return_fingprint_repeated_num_of_mz_times(self, temp_fingerprint, temp_spectrum):
 
-        fingerprint_list=[temp_fingerprint for i in range(len(temp_spectrum))]
+        fingerprint_as_array=np.array(temp_fingerprint)
+        #print(temp_fingerprint)
+        #start=time()
+        fingerprint_list=[fingerprint_as_array for i in range(len(temp_spectrum))]
+        #end=time()
+        #print(f'make fingerprint list time {end-start}')
 
-        return np.vstack(fingerprint_list)
+        #start=time()
+        asdf=np.vstack(fingerprint_list)
+        #end=time()
+        #print(f'fingerprint stack time {end-start}')
+
+        return asdf
 
     def __init__(
         self,
@@ -69,7 +79,7 @@ class GCMSDataset(Dataset):
         include_fingerprint=True,
         maximum_largest_intensity=500,
         subsample_with_class_imbalance=True,
-        prediction_style='class',
+        prediction_style='classify',
         spectra_data=None,
         structure_data=None
     ):
@@ -109,31 +119,53 @@ class GCMSDataset(Dataset):
         #the difference compared to surrounding mz
         #should decouple the output and difference features, but its ok
         
+        #print('inside get item')
+
         included_feature_list=list()
 
+
+        #start=time()
         if self.include_mz_surroundings==True:
             spectrum_differences,y=self.coerce_one_spectrum_to_difference_features_and_output_intensity(
                 self.spectra_data.at[idx,'spectrum_np']
             )
             included_feature_list.append(spectrum_differences)
 
+            # print('spectrum differences')
+            # print(np.shape(spectrum_differences))
+
+        #end=time()
+        #print(f'mz dif and y: {end-start}')
+
+        #start=time()
         if self.include_mz_location==True:
             included_feature_list.append(self.coerce_one_spectrum_to_mz_position(
                 self.spectra_data.at[idx,'spectrum_np']
             ))
-            
+        #end=time()
+        #print(f'mz absolute: {end-start}')            
 
+        #start=time()
         if self.include_fingerprint==True:
+            # included_feature_list.append(self.return_fingprint_repeated_num_of_mz_times(
+            #     self.structure_data.at[idx,'morgan_fingerprints'],
+            #     self.spectra_data.at[idx,'spectrum_np']
+            # ))
             included_feature_list.append(self.return_fingprint_repeated_num_of_mz_times(
                 self.structure_data.at[idx,'morgan_fingerprints'],
                 self.spectra_data.at[idx,'spectrum_np']
             ))
-
+        #end=time()
+        #print(f'fingerprints : {end-start}')
+        
+        #start=time()        
         if self.include_mz_surroundings==True and self.include_mz_location==True and self.include_fingerprint==True:
             x=np.hstack(included_feature_list)
-
+        #end=time()
+        #print(f'stacking: {end-start}')
         #y=
 
+        #start=time()
         if self.subsample_with_class_imbalance==True:
             #give each value a proability of getting kept
             #compare to likelihood to keep "cutoffs"
@@ -163,6 +195,9 @@ class GCMSDataset(Dataset):
             #andthe hist after is about equal
             # plt.hist(y,bins=10)
             # plt.show()
+            print('pre subsample')
+            print(np.shape(x))
+            print(np.shape(y))
             y=y[
                 random_numbers<cutoff_per_element
             ]
@@ -171,28 +206,38 @@ class GCMSDataset(Dataset):
             x=x[
                 random_numbers<cutoff_per_element
             ]
+            print('post subsample')
+            print(np.shape(x))
+            print(np.shape(y))
+        #end=time()
+        #print(f'subsampling: {end-start}')
 
-
-        if self.prediction_style=='class':
+        #start=time()
+        if self.prediction_style=='classify':
             y=np.digitize(y,bins=np.arange(0,1,0.1))
             y=np.array([element-1 for element in y])
         #also, we want to subsample if that is true
-
+        #end=time()
+        #print(f'transform to class: {end-start}')
 
         # print(np.shape(x))
         # #print(x)
-        # print(np.shape(y))
-        # #print(y)
+        # print(np.sha
+        
 
+
+        #start=time()
         #what is the difference here? from vs tensor
         if self.prediction_style=='regression':
             x=torch.tensor(x).float()
             y=torch.from_numpy(y).float()
-        elif self.prediction_style=='class':
+        elif self.prediction_style=='classify':
             x=torch.tensor(x).float()
             y=torch.from_numpy(y).long()
-        
-
+        #end=time()
+        #print(f'typecast to tensor: {end-start}')        
+        #print('----------------')
+        #print(f'self prediction style {self.prediction_style}')
         return x,y
 
 def custom_collate(data):
