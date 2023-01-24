@@ -84,7 +84,8 @@ class GCMSDataset(Dataset):
         structure_data=None
     ):
 
-
+        print(spectra_data)
+        print(structure_data)
 
         self.spectra_data=spectra_data
         self.structure_data=structure_data        
@@ -195,9 +196,9 @@ class GCMSDataset(Dataset):
             #andthe hist after is about equal
             # plt.hist(y,bins=10)
             # plt.show()
-            print('pre subsample')
-            print(np.shape(x))
-            print(np.shape(y))
+            # print('pre subsample')
+            # print(np.shape(x))
+            # print(np.shape(y))
             y=y[
                 random_numbers<cutoff_per_element
             ]
@@ -206,9 +207,9 @@ class GCMSDataset(Dataset):
             x=x[
                 random_numbers<cutoff_per_element
             ]
-            print('post subsample')
-            print(np.shape(x))
-            print(np.shape(y))
+            # print('post subsample')
+            # print(np.shape(x))
+            # print(np.shape(y))
         #end=time()
         #print(f'subsampling: {end-start}')
 
