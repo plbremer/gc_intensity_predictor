@@ -39,10 +39,10 @@ from train_gcmsnn import *
 #not every structure was reliable, and there were also multiple isomer forms of various flattened
 #we arbitrarily kept the first encountering of each inchikey first block
 #we also only made fingerprints for those compounds with an observed max mz <=500 and >50 
-# spectra_file_address='../intermediates/split_by_shunyang_prediction/spectra_not_predicted.bin'
-# fingerprint_file_address='../intermediates/split_by_shunyang_prediction/fingerprints_not_predicted.bin'
-spectra_file_address='../intermediates/mini_spectra_as_np_nist17gc.mini'
-fingerprint_file_address='../intermediates/mini_gc_with_morgan.mini'
+spectra_file_address='../intermediates/split_by_shunyang_prediction/spectra_not_predicted.bin'
+fingerprint_file_address='../intermediates/split_by_shunyang_prediction/fingerprints_not_predicted.bin'
+#spectra_file_address='../intermediates/mini_spectra_as_np_nist17gc.mini'
+#fingerprint_file_address='../intermediates/mini_gc_with_morgan.mini'
 
 
 def custom_collate(data):
@@ -56,24 +56,45 @@ def custom_collate(data):
     #return data
 
 
+# total_parameter_dict={
+#     'include_mz_location':True,
+#     'include_mz_surroundings':True,
+#     'include_fingerprint':[True,False],
+#     'maximum_largest_intensity':501,
+#     'subsample_with_class_imbalance':True,
+#     'depth':[2,4],#depth is number of layers between input and output
+#     'num_dropout_layers':[0,1],#must be less than or equal to depth
+#     'dropout_prob':0.3,
+#     'prediction_style':['classify','regression'], 
+#     'learning_rate':[0.0001,0.001,0.01,0.1],
+#     'batch_size':32,
+#     'max_epochs':5,
+#     'shuffle':True,
+#     'num_workers':2,
+#     # 'structure_data':structure_data,
+#     # 'spectra_data':spectra_data
+# }
+
 total_parameter_dict={
     'include_mz_location':True,
     'include_mz_surroundings':True,
-    'include_fingerprint':[True,False],
+    'include_fingerprint':[True],
     'maximum_largest_intensity':501,
     'subsample_with_class_imbalance':True,
-    'depth':[2,4],#depth is number of layers between input and output
-    'num_dropout_layers':[0,1],#must be less than or equal to depth
+    'depth':[4],#depth is number of layers between input and output
+    'num_dropout_layers':[0],#must be less than or equal to depth
     'dropout_prob':0.3,
-    'prediction_style':['classify','regression'], 
-    'learning_rate':[0.0001,0.001,0.01,0.1],
+    'prediction_style':['regression'], 
+    'learning_rate':[0.0001],
     'batch_size':32,
     'max_epochs':5,
     'shuffle':True,
     'num_workers':2,
+    'train_test_split':0.8
     # 'structure_data':structure_data,
     # 'spectra_data':spectra_data
 }
+
 
 # my_GCMSDataset=GCMSDataset(
 #     include_mz_location=True,
@@ -102,7 +123,8 @@ total_parameter_dict={
 #     batch_size=32,
 #     shuffle=False,
 #     num_workers=2,
-#     collate_function=custom_collate
+#     collate_function=custom_collate,
+#     train_test_split=0.8
 # )
 
 # train_loss,test_loss=train_network(
@@ -155,7 +177,8 @@ for include_fingerprint in total_parameter_dict['include_fingerprint']:
                         batch_size=total_parameter_dict['batch_size'],
                         shuffle=total_parameter_dict['shuffle'],
                         num_workers=total_parameter_dict['num_workers'],
-                        collate_function=custom_collate
+                        collate_function=custom_collate,
+                        train_test_split=total_parameter_dict['train_test_split']
                     )
 
 

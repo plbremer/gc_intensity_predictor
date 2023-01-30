@@ -8,10 +8,15 @@ def create_dataloaders(
     batch_size=32,
     shuffle=False,
     num_workers=2,
-    collate_function=None
+    collate_function=None,
+    train_test_split=0.8
 ):
 
-    train_set,test_set=random_split(my_dataset,lengths=(0.8,0.2))
+    if train_test_split!=0:
+        train_set,test_set=random_split(my_dataset,lengths=(train_test_split,1-train_test_split))
+    elif train_test_split==0:
+        train_set=None
+        test_set=my_dataset
 
     train_DataLoader=DataLoader(
         train_set,

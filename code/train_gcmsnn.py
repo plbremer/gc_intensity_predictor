@@ -30,7 +30,7 @@ def train_network(
             # print(f'we are on batch number{i}')
             # print(X.size())
             # print(y.size())
-            if i%10000==0:
+            if i%100==0:
                 print(f'we are on training batch {i}')
 
             yHat=NN(X)
@@ -63,12 +63,15 @@ def train_network(
             # hold=input('batch end')
 
         this_train_loss=this_train_loss/i
+        print('train loss')
+        print(this_train_loss)
         total_loss_list_train.append(this_train_loss)
+
 
         print('in testing')
         NN.eval()
         for i,(X,y) in enumerate(test_DataLoader):
-            if i%1000==0:
+            if i%100==0:
                 print(f'we are on testing batch {i}')
             yHat=NN(X)
             if prediction_style=='classify':
@@ -81,6 +84,8 @@ def train_network(
                 this_test_loss+=loss.item()
             
         this_test_loss=this_test_loss/i
+        print('test loss')
+        print(this_test_loss)
         total_loss_list_test.append(this_test_loss)
 
 

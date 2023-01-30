@@ -84,8 +84,8 @@ class GCMSDataset(Dataset):
         structure_data=None
     ):
 
-        print(spectra_data)
-        print(structure_data)
+        # print(spectra_data)
+        # print(structure_data)
 
         self.spectra_data=spectra_data
         self.structure_data=structure_data        
@@ -102,6 +102,9 @@ class GCMSDataset(Dataset):
         self.maximum_largest_intensity=maximum_largest_intensity
         self.subsample_with_class_imbalance=subsample_with_class_imbalance
         self.prediction_style=prediction_style
+
+        print(self.spectra_data)
+        print(self.structure_data)
 
     def __len__(self):
         return len(self.spectra_data.index)
